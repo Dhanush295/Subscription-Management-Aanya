@@ -1,6 +1,8 @@
 # Netflix-Style Subscription Management System — Full Documentation
 
-A beginner-friendly guide to understanding, running, and using this project. **One Java process, one port (8080)**, all APIs served together. React + Vite frontend. In-memory storage.
+A beginner-friendly guide to understanding, running, and using this project. **One Java process, one port (8080)**, all APIs served together. React + Vite frontend. **Supabase Postgres** (free cloud tier) for persistence — see the `model/` folder. The schema is dropped and re-seeded on every server boot, so a restart feels like a clean slate while real data still round-trips through the database.
+
+> **Quick start:** see [`README.md`](README.md) — rename `.env.test` → `.env`, drop the JDBC driver into `lib/`, then `scripts\build.cmd` + `scripts\start-all.cmd`.
 
 ---
 

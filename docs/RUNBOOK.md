@@ -1,5 +1,50 @@
 # Runbook — Troubleshooting
 
+## "IllegalStateException: .env missing SUPABASE_DB_URL or SUPABASE_DB_PASSWORD"
+
+The backend reads Supabase credentials from `.env` at the project root. Two causes:
+
+1. **You didn't rename the template.** A fresh clone ships `.env.test` — rename it:
+   ```powershell
+   Rename-Item .env.test .env
+   ```
+   ```cmd
+   ren .env.test .env
+   ```
+   ```bash
+   mv .env.test .env
+   ```
+2. **You launched the server from a sub-folder.** `.env` is resolved via `Path.of(".env")` — relative to the JVM's working directory. Always run `scripts\start-all.cmd` / `bash scripts/start-all.sh` from the project root.
+
+## "ClassNotFoundException: org.postgresql.Driver"
+
+The Postgres JDBC driver jar is missing from `lib/`. Download `postgresql-42.7.4.jar` from https://jdbc.postgresql.org/download/ and drop it into `lib/`. The jar is git-ignored intentionally.
+
+## "UnknownHostException: db.<ref>.supabase.co"
+
+Supabase's direct-connection host is IPv6-only. On an IPv4-only network (common in India/home ISPs) it won't resolve. Switch to the **Session Pooler**:
+
+1. Supabase dashboard → Project Settings → Database → Connection string → **Session pooler**.
+2. Update `.env`:
+   ```
+   SUPABASE_DB_URL=jdbc:postgresql://aws-1-<region>.pooler.supabase.com:5432/postgres?sslmode=require
+   SUPABASE_DB_USER=postgres.<project-ref>
+   SUPABASE_DB_PASSWORD=<password>
+   ```
+   Note the `postgres.<project-ref>` form for the user on the pooler.
+
+## "PSQLException: Tenant or user not found" (from the pooler)
+
+The `SUPABASE_DB_USER` doesn't match a tenant on that pooler host. Usually means you copied the pooler URL for the wrong region. Try the exact URL shown in your dashboard → Database → Connection string → Session pooler.
+
+## "[vite] http proxy error ECONNREFUSED /auth/..."
+
+The frontend is running but the Java backend on :8080 is not. Start it:
+```powershell
+.\scripts\start-all.cmd
+```
+Then `curl http://localhost:8080/` should return `{"service":"netflix.sub","status":"ok"}`.
+
 ## "The module 'scripts' could not be loaded" (PowerShell)
 
 PowerShell doesn't run scripts from the current directory unless you prefix with `.\`. Two things to check:
@@ -68,7 +113,9 @@ The admin account (`admin@gmail.com` / `admin@123`) is seeded in `App.main()` vi
 
 ## All my data disappeared after restart
 
-Expected — everything is in-memory. Restarting the server clears every store.
+Expected. `App.main()` calls `Schema.applyAndSeed(...)` on every boot, which `DROP`s every table and re-runs `model/sql/schema.sql` + `model/sql/seed.sql`. Plans, movies, and the admin account re-seed; everything else is wiped.
+
+If you want data to **persist** across restarts, comment out the `Schema.applyAndSeed(...)` line in `App.main()` — the tables and rows will remain between boots.
 
 ## "Build failed"
 

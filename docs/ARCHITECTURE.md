@@ -6,6 +6,18 @@
 
 This is deliberately **not** a full microservice deployment. It's a modular monolith: separate in source, unified in runtime.
 
+## Persistence
+
+All state lives in **Supabase Postgres** (free tier, accessed via the Session Pooler). The `model/` folder owns the DB layer:
+
+- `model/src/com/netflixsub/model/Db.java` — single `Connection` holder; reads credentials from `.env` at boot.
+- `model/src/com/netflixsub/model/Schema.java` — runs `model/sql/schema.sql` (DROP + CREATE all tables) + `model/sql/seed.sql` (3 plans, 15 movies, 1 admin account) **on every boot**. Then overwrites the admin password hash with the live `AuthStore.hash("admin@123")` value so login matches.
+- `model/src/com/netflixsub/model/*Repository.java` — one JDBC repository per entity (accounts, profiles, sessions, plans, movies, subscriptions, payments, invoices, notifications).
+
+Each in-memory `*Store` is now a **write-through cache**: on construction it loads all rows from its repository; every mutation also calls `repo.upsert` / `repo.delete` so the DB stays in sync. Handlers did not need significant changes — the store's public API is identical to the pre-DB version.
+
+**Restart semantics:** "clean slate on boot" is preserved — `Schema.applyAndSeed` drops all data, plans + movies + admin come back from seed, user accounts/subs/payments are wiped. Comment out `Schema.applyAndSeed(...)` in `App.main()` if you want data to survive restarts.
+
 ## Module Catalog
 
 | Folder | Package | Owns |
@@ -19,6 +31,7 @@ This is deliberately **not** a full microservice deployment. It's a modular mono
 | `services/notification-service` | `com.netflixsub.notification` | Notification log |
 | `services/catalog-service`    | `com.netflixsub.catalog`      | Movie metadata |
 | `services/admin-service`      | `com.netflixsub.admin`        | Cross-module admin ops: list/cancel/delete any subscription, delete any user |
+| `model`                       | `com.netflixsub.model`        | JDBC layer: `Db`, `Schema`, `*Repository`; `model/sql/{schema,seed}.sql` |
 | `shared`                      | `com.netflixsub.common`       | `Json`, `Http`, `Ids` utilities |
 
 ## Wiring Diagram (what `App.java` does)
@@ -30,10 +43,12 @@ App.main():
     plans      = new PlanStore()         ──── seed Basic/Pro/Premium
     catalog    = new CatalogStore()      ──── seed 15 movies
     payments   = new PaymentProcessor()
+    Db.init()                                         ──── reads .env
+    Schema.applyAndSeed(AuthStore.hash("admin@123"))  ──── drops + reseeds
     subs       = new SubStore()
 
-    // seed the built-in admin account (admin@gmail.com / admin@123)
-    auth.registerAdmin("admin@gmail.com", "admin@123")
+    // admin@gmail.com / admin@123 is seeded by model/sql/seed.sql and loaded
+    // into AuthStore + ProfileStore during store construction
 
     server.createContext("/auth",          new AuthHandler(auth, profiles))
     server.createContext("/users",         new UserHandler(profiles))
