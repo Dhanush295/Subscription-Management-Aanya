@@ -126,3 +126,62 @@ td button:disabled { opacity: 0.4; cursor: not-allowed; }
 .modal { background: #141414; padding: 32px; border-radius: 8px; max-width: 420px; border: 1px solid #333; }
 .modal h3 { margin-top: 0; color: #e50914; font-size: 22px; }
 .modal button { margin-top: 24px; padding: 10px 20px; background: #e50914; color: white; border: none; border-radius: 4px; font-weight: 600; width: 100%; }
+
+/* PAYMENT FLOW */
+.payment-modal { max-width: 460px; width: 100%; }
+.payment-modal h3 { color: #fff; border-bottom: 1px solid #333; padding-bottom: 12px; margin-bottom: 16px; }
+.pay-line { color: #b3b3b3; margin: 0 0 12px; font-size: 14px; }
+.pay-summary { background: #1f1f1f; border-radius: 6px; padding: 14px 16px; margin-bottom: 12px; }
+.pay-summary-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 14px; color: #b3b3b3; }
+.pay-summary-row strong { color: #fff; font-weight: 600; }
+.pay-summary-row.total { border-top: 1px solid #333; margin-top: 6px; padding-top: 12px; font-size: 16px; }
+.pay-summary-row.total strong { color: #e50914; font-size: 18px; }
+.pay-amount { font-size: 32px; font-weight: 900; color: #e50914; margin: 4px 0 18px; }
+.pay-amount span { font-size: 14px; color: #b3b3b3; font-weight: 400; }
+.pay-form label { display: block; font-size: 12px; color: #8c8c8c; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+.pay-form input { display: block; width: 100%; margin-top: 6px; padding: 10px 12px; background: #2a2a2a; border: 1px solid #3a3a3a; color: #fff; border-radius: 4px; font-size: 15px; }
+.pay-form input:focus { outline: none; border-color: #e50914; }
+.pay-row { display: flex; gap: 12px; }
+.pay-row label { flex: 1; }
+.pay-brands { font-size: 11px; color: #666; letter-spacing: 1px; margin-top: -4px; }
+.pay-actions { display: flex; gap: 10px; margin-top: 20px; }
+.pay-actions button { margin-top: 0; flex: 1; padding: 12px; border-radius: 4px; font-weight: 600; font-size: 14px; border: none; cursor: pointer; }
+.btn-primary { background: #e50914; color: #fff; }
+.btn-primary:hover:not(:disabled) { background: #f6121d; }
+.btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+.btn-secondary { background: transparent; color: #e5e5e5; border: 1px solid #555 !important; }
+.btn-secondary:hover:not(:disabled) { background: #222; }
+.muted.small { font-size: 12px; margin-top: 12px; }
+.muted.small.lock { text-align: center; }
+
+/* ACCOUNT REDESIGN */
+.account-page { max-width: 1100px; }
+.account-header { display: flex; align-items: center; gap: 20px; padding: 24px; background: linear-gradient(135deg, #1f1f1f 0%, #141414 100%); border-radius: 10px; border: 1px solid #2a2a2a; margin-bottom: 24px; }
+.avatar { width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, #e50914, #831010); display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 800; color: #fff; flex-shrink: 0; }
+.account-meta h2 { margin: 0 0 4px; font-size: 22px; color: #fff; }
+.account-sub { color: #8c8c8c; font-size: 14px; }
+
+.stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 28px; }
+.stat-card { background: #181818; border: 1px solid #2a2a2a; border-radius: 8px; padding: 16px 18px; }
+.stat-label { font-size: 12px; color: #8c8c8c; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+.stat-value { font-size: 24px; font-weight: 800; color: #fff; }
+
+.section-tabs { display: flex; gap: 4px; border-bottom: 1px solid #2a2a2a; margin-bottom: 16px; }
+.section-tabs button { background: transparent; color: #8c8c8c; border: none; padding: 12px 18px; font-size: 14px; font-weight: 600; border-bottom: 2px solid transparent; transition: 0.2s; }
+.section-tabs button:hover { color: #fff; }
+.section-tabs button.on { color: #fff; border-bottom-color: #e50914; }
+
+.section-card { background: #141414; border: 1px solid #2a2a2a; border-radius: 8px; overflow: hidden; }
+.section-card table { margin: 0; }
+.section-card th { background: #1a1a1a; padding: 14px 16px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+.section-card td { padding: 14px 16px; }
+.actions-cell { white-space: nowrap; }
+.actions-cell button { margin-right: 6px; }
+.empty-state { padding: 48px 24px; text-align: center; color: #8c8c8c; }
+.empty-state p { margin: 4px 0; }
+.mono { font-family: 'Courier New', monospace; color: #b3b3b3; }
+
+@media (max-width: 720px) {
+  .stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .pay-row { flex-direction: column; }
+}

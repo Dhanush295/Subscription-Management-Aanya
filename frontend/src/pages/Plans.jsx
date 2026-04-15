@@ -1,25 +1,26 @@
 import { useEffect, useState } from 'react';
 import { getPlans, subscribe } from '../api.js';
 import ErrorModal from '../components/ErrorModal.jsx';
+import PaymentFlow from '../components/PaymentFlow.jsx';
 
 export default function Plans({ user, onSubscribed }) {
   const [plans, setPlans]   = useState([]);
   const [cycle, setCycle]   = useState('MONTHLY');
-  const [card, setCard]     = useState('1234');
   const [error, setError]   = useState(null);
   const [success, setOk]    = useState(null);
+  const [pending, setPending] = useState(null);
 
   useEffect(() => { (async () => {
     const res = await getPlans();
     if (res.error) setError(res.error); else setPlans(res);
   })(); }, []);
 
-  const pick = async (code) => {
+  const handlePay = async (last4) => {
     setOk(null);
-    const res = await subscribe(user.userId, code, cycle, card);
-    if (res.error) return setError(res.error);
-    const plan = plans.find((p) => p.code === code);
-    setOk(`${user.firstName}, you're subscribed to ${plan?.name || code}. Status: ${res.status}. Expires ${res.expiresAt?.slice(0, 10)}.`);
+    const res = await subscribe(user.userId, pending.code, cycle, last4);
+    if (res.error) { setPending(null); return setError(res.error); }
+    setOk(`${user.firstName}, you're subscribed to ${pending.name}. Status: ${res.status}. Expires ${res.expiresAt?.slice(0, 10)}.`);
+    setPending(null);
     onSubscribed && onSubscribed();
   };
 
@@ -30,9 +31,6 @@ export default function Plans({ user, onSubscribed }) {
         <button className={cycle === 'MONTHLY' ? 'on' : ''} onClick={() => setCycle('MONTHLY')}>Monthly</button>
         <button className={cycle === 'YEARLY'  ? 'on' : ''} onClick={() => setCycle('YEARLY')}>Yearly (save 15%)</button>
       </div>
-      <label className="card-input">Test card last-4 (use 0000 to simulate failure)
-        <input value={card} onChange={(e) => setCard(e.target.value)} />
-      </label>
       <div className="plan-grid">
         {plans.map((p) => (
           <div className="plan-card" key={p.code}>
@@ -47,11 +45,12 @@ export default function Plans({ user, onSubscribed }) {
               <li>{p.trialDays}-day free trial</li>
               {cycle === 'YEARLY' && <li>Save {p.yearlyDiscountPct}% yearly</li>}
             </ul>
-            <button onClick={() => pick(p.code)}>Subscribe</button>
+            <button onClick={() => setPending(p)}>Subscribe</button>
           </div>
         ))}
       </div>
       {success && <div className="success">{success}</div>}
+      <PaymentFlow plan={pending} cycle={cycle} onConfirm={handlePay} onClose={() => setPending(null)} />
       <ErrorModal message={error} onClose={() => setError(null)} />
     </div>
   );
