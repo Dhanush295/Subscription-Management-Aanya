@@ -9,7 +9,7 @@ INSERT INTO movies (id, title, language, genre, year, rating, min_plan) VALUES
   ('m01', 'KGF: Chapter 2',              'Kannada', 'Action',   2022, 8.4, 'BASIC'),
   ('m02', 'Kantara',                     'Kannada', 'Drama',    2022, 8.5, 'BASIC'),
   ('m03', 'U-Turn',                      'Kannada', 'Thriller', 2016, 7.8, 'PRO'),
-  ('m04', 'Raja Huli',                   'Kannada', 'Comedy',   2013, 6.9, 'BASIC'),
+  ('m04', 'SU from SO ',                 'Kannada', 'Comedy',   2013, 6.9, 'BASIC'),
   ('m05', 'Mungaru Male',                'Kannada', 'Romance',  2006, 8.2, 'BASIC'),
   ('m06', '777 Charlie',                 'Kannada', 'Drama',    2022, 8.7, 'PRO'),
   ('m07', 'Vikrant Rona',                'Kannada', 'Action',   2022, 7.1, 'PRO'),
