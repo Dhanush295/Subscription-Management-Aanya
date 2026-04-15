@@ -1,4 +1,4 @@
-export default function ConfirmModal({ open, title, message, confirmLabel = 'Confirm', onConfirm, onClose }) {
+export default function ConfirmModal({ open, title, message, confirmLabel = 'Confirm', cancelLabel = 'Cancel', onConfirm, onClose }) {
   if (!open) return null;
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -6,7 +6,7 @@ export default function ConfirmModal({ open, title, message, confirmLabel = 'Con
         <h3>{title}</h3>
         <p>{message}</p>
         <div className="pay-actions">
-          <button className="btn-secondary" onClick={onClose}>Cancel</button>
+          <button className="btn-secondary" onClick={onClose}>{cancelLabel}</button>
           <button className="btn-primary" onClick={onConfirm}>{confirmLabel}</button>
         </div>
       </div>

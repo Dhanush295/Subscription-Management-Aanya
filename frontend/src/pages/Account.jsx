@@ -28,7 +28,8 @@ export default function Account({ user }) {
     setConfirm({
       title: `${label} subscription?`,
       message: `Are you sure you want to ${label.toLowerCase()} your ${planName} subscription?`,
-      confirmLabel: label,
+      confirmLabel: label === 'Cancel' ? 'yes' : label,
+      cancelLabel: label === 'Cancel' ? 'NO' : 'Cancel',
       run: async () => {
         setConfirm(null);
         const res = await fn(id);
@@ -191,6 +192,7 @@ export default function Account({ user }) {
         title={confirm?.title}
         message={confirm?.message}
         confirmLabel={confirm?.confirmLabel}
+        cancelLabel={confirm?.cancelLabel}
         onConfirm={() => confirm?.run()}
         onClose={() => setConfirm(null)}
       />

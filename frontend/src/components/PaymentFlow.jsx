@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 
-export default function PaymentFlow({ plan, cycle, onConfirm, onClose }) {
+export default function PaymentFlow({ plan, cycle, onConfirm, onClose, user }) {
   const [step, setStep] = useState('confirm');
   const [processing, setProcessing] = useState(false);
   const [card, setCard] = useState({
-    name: 'Dhanush G',
+    name: user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() : '',
     number: '4242 4242 4242 1234',
     expiry: '12/29',
     cvv: '123',

@@ -50,7 +50,7 @@ export default function Plans({ user, onSubscribed }) {
         ))}
       </div>
       {success && <div className="success">{success}</div>}
-      <PaymentFlow plan={pending} cycle={cycle} onConfirm={handlePay} onClose={() => setPending(null)} />
+      <PaymentFlow user={user} plan={pending} cycle={cycle} onConfirm={handlePay} onClose={() => setPending(null)} />
       <ErrorModal message={error} onClose={() => setError(null)} />
     </div>
   );
