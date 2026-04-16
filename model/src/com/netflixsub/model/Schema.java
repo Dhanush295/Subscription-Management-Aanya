@@ -11,7 +11,8 @@ public final class Schema {
     public static void applyAndSeed(String adminPasswordHash) throws Exception {
         runFile(Path.of("model", "sql", "schema.sql"));
         runFile(Path.of("model", "sql", "seed.sql"));
-        try (var ps = Db.get().prepareStatement("UPDATE accounts SET password_hash = ? WHERE user_id = ?")) {
+        try (var ps = Db.get().prepareStatement(
+                "UPDATE accounts SET password_hash = ? WHERE user_id = ? AND password_hash = 'PLACEHOLDER'")) {
             ps.setString(1, adminPasswordHash);
             ps.setString(2, "admin000");
             ps.executeUpdate();

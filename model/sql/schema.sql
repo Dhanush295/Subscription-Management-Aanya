@@ -1,15 +1,6 @@
--- Dropped and recreated on every server boot. "Restart = clean slate."
-DROP TABLE IF EXISTS notifications CASCADE;
-DROP TABLE IF EXISTS invoices      CASCADE;
-DROP TABLE IF EXISTS payments      CASCADE;
-DROP TABLE IF EXISTS subscriptions CASCADE;
-DROP TABLE IF EXISTS sessions      CASCADE;
-DROP TABLE IF EXISTS profiles      CASCADE;
-DROP TABLE IF EXISTS accounts      CASCADE;
-DROP TABLE IF EXISTS movies        CASCADE;
-DROP TABLE IF EXISTS plans         CASCADE;
+-- Tables are created only if they don't already exist. User data persists across restarts.
 
-CREATE TABLE plans (
+CREATE TABLE IF NOT EXISTS plans (
   code                 TEXT PRIMARY KEY,
   name                 TEXT NOT NULL,
   monthly_inr          DOUBLE PRECISION NOT NULL,
@@ -20,7 +11,7 @@ CREATE TABLE plans (
   yearly_discount_pct  INT  NOT NULL
 );
 
-CREATE TABLE movies (
+CREATE TABLE IF NOT EXISTS movies (
   id        TEXT PRIMARY KEY,
   title     TEXT NOT NULL,
   language  TEXT NOT NULL,
@@ -30,7 +21,7 @@ CREATE TABLE movies (
   min_plan  TEXT NOT NULL REFERENCES plans(code)
 );
 
-CREATE TABLE accounts (
+CREATE TABLE IF NOT EXISTS accounts (
   user_id       TEXT PRIMARY KEY,
   email         TEXT UNIQUE NOT NULL,
   password_hash TEXT NOT NULL,
@@ -38,7 +29,7 @@ CREATE TABLE accounts (
   created_at    TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE TABLE profiles (
+CREATE TABLE IF NOT EXISTS profiles (
   user_id     TEXT PRIMARY KEY REFERENCES accounts(user_id) ON DELETE CASCADE,
   first_name  TEXT NOT NULL,
   last_name   TEXT NOT NULL,
@@ -47,13 +38,13 @@ CREATE TABLE profiles (
   created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE TABLE sessions (
+CREATE TABLE IF NOT EXISTS sessions (
   token      TEXT PRIMARY KEY,
   user_id    TEXT NOT NULL REFERENCES accounts(user_id) ON DELETE CASCADE,
   issued_at  TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE TABLE subscriptions (
+CREATE TABLE IF NOT EXISTS subscriptions (
   sub_id         TEXT PRIMARY KEY,
   user_id        TEXT NOT NULL REFERENCES accounts(user_id) ON DELETE CASCADE,
   plan_code      TEXT NOT NULL REFERENCES plans(code),
@@ -65,7 +56,7 @@ CREATE TABLE subscriptions (
   cancelled_at   TIMESTAMPTZ
 );
 
-CREATE TABLE payments (
+CREATE TABLE IF NOT EXISTS payments (
   payment_id      TEXT PRIMARY KEY,
   user_id         TEXT NOT NULL,
   sub_id          TEXT NOT NULL,
@@ -76,7 +67,7 @@ CREATE TABLE payments (
   created_at      TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE TABLE invoices (
+CREATE TABLE IF NOT EXISTS invoices (
   invoice_id  TEXT PRIMARY KEY,
   user_id     TEXT NOT NULL,
   sub_id      TEXT NOT NULL,
@@ -85,7 +76,7 @@ CREATE TABLE invoices (
   issued_at   TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE TABLE notifications (
+CREATE TABLE IF NOT EXISTS notifications (
   id          TEXT PRIMARY KEY,
   user_id     TEXT NOT NULL,
   type        TEXT NOT NULL,

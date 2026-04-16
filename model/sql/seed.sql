@@ -1,9 +1,10 @@
--- Static seed data. Re-run on every server boot after schema.sql.
+-- Static seed data. Only inserts rows that don't already exist.
 
 INSERT INTO plans (code, name, monthly_inr, yearly_inr, screens, quality, trial_days, yearly_discount_pct) VALUES
   ('BASIC',   'Basic',   199,  1999, 1, '480p',  7,  15),
   ('PRO',     'Pro',     499,  4999, 2, '1080p', 7,  17),
-  ('PREMIUM', 'Premium', 799,  7999, 4, '4K',   14, 17);
+  ('PREMIUM', 'Premium', 799,  7999, 4, '4K',   14, 17)
+ON CONFLICT (code) DO NOTHING;
 
 INSERT INTO movies (id, title, language, genre, year, rating, min_plan) VALUES
   ('m01', 'KGF: Chapter 2',              'Kannada', 'Action',   2022, 8.4, 'BASIC'),
@@ -20,13 +21,14 @@ INSERT INTO movies (id, title, language, genre, year, rating, min_plan) VALUES
   ('m12', 'La La Land',                  'English', 'Romance',  2016, 8.0, 'BASIC'),
   ('m13', 'Inception',                   'English', 'Thriller', 2010, 8.8, 'PREMIUM'),
   ('m14', 'Interstellar',                'English', 'Drama',    2014, 8.7, 'PREMIUM'),
-  ('m15', 'John Wick',                   'English', 'Action',   2014, 7.4, 'PRO');
+  ('m15', 'John Wick',                   'English', 'Action',   2014, 7.4, 'PRO')
+ON CONFLICT (id) DO NOTHING;
 
--- Built-in admin account. Password hash mirrors AuthStore.hash("admin@123").
--- Formula: Integer.toHexString(("admin@123" + "netflix-salt").hashCode())
--- Computed below at boot by Schema.java; placeholder here so foreign keys work if
--- someone inserts manually. Schema.java overwrites this row with the real hash.
+-- Built-in admin account. Password hash is a placeholder;
+-- Schema.java overwrites it with the real hash on boot.
 INSERT INTO accounts (user_id, email, password_hash, role) VALUES
-  ('admin000', 'admin@gmail.com', 'PLACEHOLDER', 'ADMIN');
+  ('admin000', 'admin@gmail.com', 'PLACEHOLDER', 'ADMIN')
+ON CONFLICT (user_id) DO NOTHING;
 INSERT INTO profiles (user_id, first_name, last_name, age, email) VALUES
-  ('admin000', 'Admin', 'User', 0, 'admin@gmail.com');
+  ('admin000', 'Admin', 'User', 0, 'admin@gmail.com')
+ON CONFLICT (user_id) DO NOTHING;

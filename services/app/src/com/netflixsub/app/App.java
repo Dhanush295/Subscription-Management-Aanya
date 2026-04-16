@@ -31,7 +31,7 @@ public class App {
 
         System.out.println("[db] connecting to Supabase...");
         Db.init();
-        System.out.println("[db] applying schema + seed (drops and reseeds every boot)");
+        System.out.println("[db] applying schema + seed (preserves existing data)");
         Schema.applyAndSeed(AuthStore.hash("admin@123"));
         Runtime.getRuntime().addShutdownHook(new Thread(Db::close));
 
